@@ -1,0 +1,30 @@
+project:
+  type: website
+  output-dir: "docs"
+  
+execute:
+  freeze: auto
+
+website:
+  title: "JP's Projects"
+  navbar:
+    left:
+      - icon: github
+        href: https://github.com/jpquast
+      - icon: twitter
+        href: https://twitter.com/QuastJP
+    right:
+      - href: index.qmd
+        text: "Home"
+      - about.qmd
+
+format:
+  html:
+    theme: 
+      light: flatly
+      dark: darkly
+    css: styles.css
+    toc: true
+
+
+
