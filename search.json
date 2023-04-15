@@ -2,15 +2,15 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "About",
+    "title": "JP's Projects",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites.\n\n1 + 1\n\n[1] 2"
+    "text": "No matching items"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "Welcome to my website! My name is Jan-Philipp, but most people call me JP. I am a biochemist and currently pursuing my PhD in the Picotti Lab at ETH in Zurich, Switzerland. In my research I study protein-metal interactions using mass spectrometry and structural proteomics methods.\nThis website and blog serves as a platform for me to share tutorials and the various projects I am working on in my free time. In particular I enjoy automating processes both in the real world and digitally through robots and code. In my DIY projects I like combining computer-aided design (CAD) with 3D printing (both FDM and DLP), microcontroller based simple electronic circuits, and coding.\nThrough my PhD I have found a passion for the programming language R. I have contributed to the development of several R packages and are the maintainer of the packages protti and ggplate.\nIf you are curious and have any questions or would like to discuss my work further please feel free to reach out to me. I am always open to collaborate on new and interesting projects!"
   }
 ]
