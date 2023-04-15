@@ -11,9 +11,9 @@ website:
       - icon: twitter
         href: https://twitter.com/QuastJP
     right:
-      - href: index.qmd
-        text: "Home"
       - about.qmd
+      - text: "Blog"
+        href: index.qmd
 
 format:
   html:

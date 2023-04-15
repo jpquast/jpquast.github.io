@@ -1,9 +1,24 @@
 ---
 title: "About"
+image: img/picture_me.png
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/QuastJP
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/jan-philipp-quast-5750a1132/
+    - icon: github
+      text: Github
+      href: https://github.com/jpquast
 ---
 
-About this site
+Welcome to my website! My name is Jan-Philipp, but most people call me JP. I am a biochemist and currently pursuing my PhD in the Picotti Lab at ETH in Zurich, Switzerland. In my research I study protein-metal interactions using mass spectrometry and structural proteomics methods.
 
-```{r}
-1 + 1
-```
+This website and blog serves as a platform for me to share tutorials and the various projects I am working on in my free time. In particular I enjoy automating processes both in the real world and digitally through robots and code. In my DIY projects I like combining computer-aided design (CAD) with 3D printing (both FDM and DLP), microcontroller based simple electronic circuits, and coding.
+
+Through my PhD I have found a passion for the programming language R. I have contributed to the development of several R packages and are the maintainer of the packages [**protti**](https://jpquast.github.io/protti/) and [**ggplate**](https://jpquast.github.io/ggplate/).
+
+If you are curious and have any questions or would like to discuss my work further please feel free to reach out to me. I am always open to collaborate on new and interesting projects!
