@@ -9,17 +9,17 @@ title-block-banner: img/plist_banner.png
 image: img/plist.png
 ---
 
-If you enjoy automating things and work on a macOS system, `launchd` is a must know tool! But what is it and how does it work?
+If you enjoy automating things and work on a macOS system, `launchd` is a tool you must know! But what is it, and how does it work?
 
-`launchd` is a process on macOS that manages the execution and scheduling of background processes (daemons). It replaces older time-based job schedulers for Unix based systems such as `cron`. It comes in very handy if you want to schedule the execution of some scripts at specific times or intervals.
+`launchd` is a process on macOS that manages the execution and scheduling of background processes (daemons). It replaces older time-based job schedulers for Unix systems such as `cron`. In short, it is necessary if you want to schedule the execution of your scripts at specific times or intervals.
 
-I wanted to use `launchd` to automatically download and delete data from a Google Sheets file to which a microcontroller saves temperature and humidity data. Over time the document would fill up and I had to manually download and delete the data to make space for more sensor readings. Therefore, I wrote an R script that takes care of this for me. In order to automate the execution of this script I used `launchd`.
+I came across `launchd` when I wanted to automate downloading and deleting data from a Google Sheets file to which a microcontroller saves temperature and humidity measurements. Over time, the document would fill up, and I had to manually download and delete the data to make space for more sensor readings. Therefore, I wrote an R script that takes care of this for me. In order to automate the execution of this script, I needed `launchd`.
 
 ## Getting Started
 
-To set up `launchd`, you'll need to create a LaunchAgent property list file (`.plist`) in XML format. This file describes the process or program you want to launch, its arguments, and when and how often to execute it.
+It is pretty simple to use `launchd` if you know how. To set it up, you'll need to create a LaunchAgent property list file (`.plist`) in XML format. This file describes the process or program you want to launch, its arguments, and when and how often to execute it.
 
-In this short tutorial we will create a simple `.plist` file that simply executes a script at a certain time during the day. There are a lot more customisation options and things you can do with `launchd` that I won't go into here but that you can read up on with the following terminal command.
+In this short tutorial, we will create a simple `.plist` file that executes a script at a certain time during the day. There are a lot more customisation options and things you can do with `launchd` that I won't go into. If you are curious, you can read up on them using the following terminal command.
 
 ``` bash
 man launchd.plist
@@ -27,7 +27,7 @@ man launchd.plist
 
 ## Creating a .plist file
 
-The overall structure of a `.plist` file is always identical. Bellow you can find the file that I have created for my specific task which I called `com.jpq.download_and_upload_data.plist`.
+The overall structure of a `.plist` file is always identical. Below you can find the file that I have created for my specific task, which I called `com.jpq.download_and_upload_data.plist`.
 
 ``` xml
     <?xml version="1.0" encoding="UTF-8"?>
@@ -55,26 +55,26 @@ The overall structure of a `.plist` file is always identical. Bellow you can fin
 
 You can see that there are three main `<key>` fields in the file that specify `Label`, `ProgramArguments` and `StartCalendarInterval`.
 
-| `<key>`                 | Description                                                                                      |
-|-----------------|-------------------------------------------------------|
-| `Label`                 | Uniquely identifies the job. Usually the file name. It has the structure `com.creator.FileName`. |
-| `ProgramArguments`      | An array of strings which contain the tokenised arguments and the program to run.                |
-| `StartCalendarInterval` | Contains `<key>`/`integer` fields that specify the time that the script should be executed at.   |
+| `<key>`                 | Description                                                                                                      |
+|------------------|------------------------------------------------------|
+| `Label`                 | Uniquely identifies the job. Usually the file name. It has the structure `com.creator.FileName`.                 |
+| `ProgramArguments`      | An array of strings which contain the tokenised arguments and the program to run.                                |
+| `StartCalendarInterval` | Contains a dictionary with `<key>`/`integer` fields that specify the time that the script should be executed at. |
 
 ### ProgramArguments
 
-`ProgramArguments` specify the *what* should be executed *how*. You would specify the execution of the script in the same way how you would also execute it in the terminal with the exception that you would tokenise (split up) the prompt.
+`ProgramArguments` specify *what* should be executed *how*. You would specify the execution of the script in the same way that you would also execute it in the terminal, with the exception that you would tokenise (split up) the prompt.
 
-In our `.plist` file above I use the `Rscript` interpreter that is usually located at `/usr/local/bin/Rscript` to execute my R script located at `/Users/user/Documents/sensor_data/download_and_upload_data.R`
+In our `.plist` file above, I use the `Rscript` interpreter that is usually located at `/usr/local/bin/Rscript` to execute my R script located at `/Users/user/Documents/sensor_data/download_and_upload_data.R`
 
-If you have a shell script `.sh` file that you want to execute directly you can use `Program` instead of `ProgramArguments` and provide the path to the script directly.
+If you have a shell script `.sh` file that you want to execute directly, you can use `Program` instead of `ProgramArguments` and provide the path to the script directly.
 
 ``` xml
 <key>Program</key>
   <string>/Users/user/Scripts/script.sh</string>
 ```
 
-If you want to run the shell script for the first time make sure that you have permission by using `chmod` in the terminal.
+If you want to run a shell script for the first time, make sure that you have permission by using `chmod` in the terminal.
 
 ``` bash
 chmod u+x script.sh
@@ -82,7 +82,7 @@ chmod u+x script.sh
 
 ### StartCalendarInterval
 
-The `StartCalendarInterval` can specify a specific time point at which the script should be executed. The below example executes the script on the 15th of July at 13:30 if this day is a Sunday.
+The `StartCalendarInterval` can set a specific time point at which the script should be executed. The below example executes the script on the 15th of July at 13:30 if this day is a Sunday.
 
 ``` xml
 <key>StartCalendarInterval</key>
@@ -100,13 +100,13 @@ The `StartCalendarInterval` can specify a specific time point at which the scrip
     </dict>
 ```
 
-If you simply leave out some of these keys from the dictionary they are treated as a wildcard meaning they are not considered for the execution of the job.
+If you simply leave out some of these keys from the dictionary, they are treated as a wildcard, meaning they are not considered for the execution of the job.
 
 ::: callout-note
-One important advantage of using `launchd` over e.g. `cron` is that if a job could not be executed at its designated time, it will instead be executed at the next possible time. In addition, if a job could not be run on multiple scheduled times it will be executed only once at the next possible time.
+One important advantage of using `launchd` over `cron` is that if a job cannot be executed at its designated time, it will instead be executed at the next possible time. In addition, if a job cannot be run at multiple scheduled times, it will be executed only once at the next possible time.
 :::
 
-If you want to execute a script e.g. every 10 minutes you can use `StartInterval` instead:
+If you want to execute a script, for example, every 10 minutes, you can use `StartInterval` instead:
 
 ``` xml
 <key>StartInterval</key>
@@ -118,28 +118,27 @@ If you want to execute a script e.g. every 10 minutes you can use `StartInterval
 Once you have written your `.plist` file you will have to save it in the appropriate directory. There are multiple different [options](https://support.apple.com/en-gb/guide/terminal/apdc6c1077b-5d5d-4d35-9c19-60f2397b2369/mac):
 
 | **Folder**                    | **Usage**                                                         |
-|:------------------------------|:------------------------------------------------------------------|
+|:----------------------|:------------------------------------------------|
 | /System/Library/LaunchDaemons | Apple-supplied system daemons                                     |
 | /System/Library/LaunchAgents  | Apple-supplied agents that apply to all users on a per-user basis |
 | /Library/LaunchDaemons        | Third-party system daemons                                        |
 | /Library/LaunchAgents         | Third-party agents that apply to all users on a per-user basis    |
 | \~/Library/LaunchAgents       | Third-party agents that apply only to the logged-in user          |
 
-Agents are always associated with the logged on user, meaning the scripts are restricted to only a specific user while Deamons are run under the root user and thus run for everyone.
+Agents are always associated with the logged-on user, meaning the scripts are restricted to only a specific user, while Deamons are run under the root user and thus run for everyone.
 
-Since my script specifically saves data in a folder associated with my user it is better to use an Agent and not a Daemon. Therefore, I chose the lowest option as my location for the `.plist` file: `/Users/user/Library/LaunchAgents/com.jpq.download_data_from_sheets.plist`
+Since my script specifically saves data in a folder associated with my user, it is better to use an Agent and not a Daemon. Therefore, I chose the lowest option as my location for the `.plist` file: `/Users/user/Library/LaunchAgents/com.jpq.download_data_from_sheets.plist`
 
 ## Loading an Agent
 
-After you have saved your `.plist` file in one of the appropriate locations you have to load it using the `launchctl` command in the terminal.
+After you have saved your `.plist` file in one of the appropriate locations, you have to load it using the `launchctl` command in the terminal.
 
 ``` bash
 launchctl load /Users/user/Library/LaunchAgents/com.jpq.download_data_from_sheets.plist
 ```
 
 ::: callout-note
-If you want to see all loaded jobs you can use `launchctl list` in the terminal. In order to stop a job use `launchctl unload file/path` instead of `launchctl load file/path` with the path of your file. Using `launchctl start JobLabel` will run the job immediately and not only when scheduled.
+If you want to see all loaded jobs, you can use `launchctl list` in the terminal. In order to stop a job, use `launchctl unload file/path`. Using `launchctl start JobLabel` will run the job immediately and not only when scheduled.
 :::
 
 This is it! Now our script will be executed automatically at the specified time points.
-
