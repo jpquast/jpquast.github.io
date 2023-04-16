@@ -9,7 +9,7 @@
 <meta name="author" content="Jan-Philipp Quast">
 <meta name="dcterms.date" content="2023-04-16">
 
-<title>JP’s Projects - launchd Setup</title>
+<title>JP’s Projects - Automation with launchd</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -185,7 +185,7 @@ background-size: cover;
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">launchd Setup</h1>
+      <h1 class="title">Automation with launchd</h1>
             <p class="subtitle lead">Schedule Scripts on macOS</p>
                                 <div class="quarto-categories">
                 <div class="quarto-category">coding</div>
@@ -240,6 +240,7 @@ background-size: cover;
 
 
 
+<p>If you enjoy automating things and work on a macOS system, <code>launchd</code> is a must know tool! But what is it and how does it work?</p>
 <p><code>launchd</code> is a process on macOS that manages the execution and scheduling of background processes (daemons). It replaces older time-based job schedulers for Unix based systems such as <code>cron</code>. It comes in very handy if you want to schedule the execution of some scripts at specific times or intervals.</p>
 <p>I wanted to use <code>launchd</code> to automatically download and delete data from a Google Sheets file to which a microcontroller saves temperature and humidity data. Over time the document would fill up and I had to manually download and delete the data to make space for more sensor readings. Therefore, I wrote an R script that takes care of this for me. In order to automate the execution of this script I used <code>launchd</code>.</p>
 <section id="getting-started" class="level2">

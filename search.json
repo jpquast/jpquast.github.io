@@ -2,35 +2,35 @@
   {
     "objectID": "posts/2023-04-16-using-launchd/index.html",
     "href": "posts/2023-04-16-using-launchd/index.html",
-    "title": "launchd Setup",
+    "title": "Automation with launchd",
     "section": "",
-    "text": "launchd is a process on macOS that manages the execution and scheduling of background processes (daemons). It replaces older time-based job schedulers for Unix based systems such as cron. It comes in very handy if you want to schedule the execution of some scripts at specific times or intervals.\nI wanted to use launchd to automatically download and delete data from a Google Sheets file to which a microcontroller saves temperature and humidity data. Over time the document would fill up and I had to manually download and delete the data to make space for more sensor readings. Therefore, I wrote an R script that takes care of this for me. In order to automate the execution of this script I used launchd."
+    "text": "If you enjoy automating things and work on a macOS system, launchd is a must know tool! But what is it and how does it work?\nlaunchd is a process on macOS that manages the execution and scheduling of background processes (daemons). It replaces older time-based job schedulers for Unix based systems such as cron. It comes in very handy if you want to schedule the execution of some scripts at specific times or intervals.\nI wanted to use launchd to automatically download and delete data from a Google Sheets file to which a microcontroller saves temperature and humidity data. Over time the document would fill up and I had to manually download and delete the data to make space for more sensor readings. Therefore, I wrote an R script that takes care of this for me. In order to automate the execution of this script I used launchd."
   },
   {
     "objectID": "posts/2023-04-16-using-launchd/index.html#getting-started",
     "href": "posts/2023-04-16-using-launchd/index.html#getting-started",
-    "title": "launchd Setup",
+    "title": "Automation with launchd",
     "section": "Getting Started",
     "text": "Getting Started\nTo set up launchd, you’ll need to create a LaunchAgent property list file (.plist) in XML format. This file describes the process or program you want to launch, its arguments, and when and how often to execute it.\nIn this short tutorial we will create a simple .plist file that simply executes a script at a certain time during the day. There are a lot more customisation options and things you can do with launchd that I won’t go into here but that you can read up on with the following terminal command.\nman launchd.plist"
   },
   {
     "objectID": "posts/2023-04-16-using-launchd/index.html#creating-a-.plist-file",
     "href": "posts/2023-04-16-using-launchd/index.html#creating-a-.plist-file",
-    "title": "launchd Setup",
+    "title": "Automation with launchd",
     "section": "Creating a .plist file",
     "text": "Creating a .plist file\nThe overall structure of a .plist file is always identical. Bellow you can find the file that I have created for my specific task which I called com.jpq.download_and_upload_data.plist.\n    <?xml version=\"1.0\" encoding=\"UTF-8\"?>\n    <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\"\n      \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n    <plist version=\"1.0\">\n    <dict>\n        <key>Label</key>\n        <string>com.jpq.download_and_upload_data</string>\n        <key>ProgramArguments</key>\n        <array>\n            <string>/usr/local/bin/Rscript</string>\n            <string>/Users/user/Documents/sensor_data/download_and_upload_data.R</string>\n        </array>\n        <key>StartCalendarInterval</key>\n        <dict>\n            <key>Hour</key>\n            <integer>13</integer>\n            <key>Minute</key>\n            <integer>0</integer>\n        </dict>\n    </dict>\n    </plist>\nYou can see that there are three main <key> fields in the file that specify Label, ProgramArguments and StartCalendarInterval.\n\n\n\n\n\n\n\n<key>\nDescription\n\n\n\n\nLabel\nUniquely identifies the job. Usually the file name. It has the structure com.creator.FileName.\n\n\nProgramArguments\nAn array of strings which contain the tokenised arguments and the program to run.\n\n\nStartCalendarInterval\nContains <key>/integer fields that specify the time that the script should be executed at.\n\n\n\n\nProgramArguments\nProgramArguments specify the what should be executed how. You would specify the execution of the script in the same way how you would also execute it in the terminal with the exception that you would tokenise (split up) the prompt.\nIn our .plist file above I use the Rscript interpreter that is usually located at /usr/local/bin/Rscript to execute my R script located at /Users/user/Documents/sensor_data/download_and_upload_data.R\nIf you have a shell script .sh file that you want to execute directly you can use Program instead of ProgramArguments and provide the path to the script directly.\n<key>Program</key>\n  <string>/Users/user/Scripts/script.sh</string>\nIf you want to run the shell script for the first time make sure that you have permission by using chmod in the terminal.\nchmod u+x script.sh\n\n\nStartCalendarInterval\nThe StartCalendarInterval can specify a specific time point at which the script should be executed. The below example executes the script on the 15th of July at 13:30 if this day is a Sunday.\n<key>StartCalendarInterval</key>\n    <dict>\n        <key>Day</key>\n        <integer>15</integer>\n        <key>Hour</key>\n        <integer>13</integer>\n        <key>Minute</key>\n        <integer>30</integer>\n        <key>Month</key>\n        <integer>7</integer>\n        <key>Weekday</key>\n        <integer>0</integer>\n    </dict>\nIf you simply leave out some of these keys from the dictionary they are treated as a wildcard meaning they are not considered for the execution of the job.\n\n\n\n\n\n\nNote\n\n\n\nOne important advantage of using launchd over e.g. cron is that if a job could not be executed at its designated time, it will instead be executed at the next possible time. In addition, if a job could not be run on multiple scheduled times it will be executed only once at the next possible time.\n\n\nIf you want to execute a script e.g. every 10 minutes you can use StartInterval instead:\n<key>StartInterval</key>\n    <integer>600</integer>"
   },
   {
     "objectID": "posts/2023-04-16-using-launchd/index.html#file-location",
     "href": "posts/2023-04-16-using-launchd/index.html#file-location",
-    "title": "launchd Setup",
+    "title": "Automation with launchd",
     "section": "File Location",
     "text": "File Location\nOnce you have written your .plist file you will have to save it in the appropriate directory. There are multiple different options:\n\n\n\n\n\n\n\nFolder\nUsage\n\n\n\n\n/System/Library/LaunchDaemons\nApple-supplied system daemons\n\n\n/System/Library/LaunchAgents\nApple-supplied agents that apply to all users on a per-user basis\n\n\n/Library/LaunchDaemons\nThird-party system daemons\n\n\n/Library/LaunchAgents\nThird-party agents that apply to all users on a per-user basis\n\n\n~/Library/LaunchAgents\nThird-party agents that apply only to the logged-in user\n\n\n\nAgents are always associated with the logged on user, meaning the scripts are restricted to only a specific user while Deamons are run under the root user and thus run for everyone.\nSince my script specifically saves data in a folder associated with my user it is better to use an Agent and not a Daemon. Therefore, I chose the lowest option as my location for the .plist file: /Users/user/Library/LaunchAgents/com.jpq.download_data_from_sheets.plist"
   },
   {
     "objectID": "posts/2023-04-16-using-launchd/index.html#loading-an-agent",
     "href": "posts/2023-04-16-using-launchd/index.html#loading-an-agent",
-    "title": "launchd Setup",
+    "title": "Automation with launchd",
     "section": "Loading an Agent",
     "text": "Loading an Agent\nAfter you have saved your .plist file in one of the appropriate locations you have to load it using the launchctl command in the terminal.\nlaunchctl load /Users/user/Library/LaunchAgents/com.jpq.download_data_from_sheets.plist\n\n\n\n\n\n\nNote\n\n\n\nIf you want to see all loaded jobs you can use launchctl list in the terminal. In order to stop a job use launchctl unload file/path instead of launchctl load file/path with the path of your file. Using launchctl start JobLabel will run the job immediately and not only when scheduled.\n\n\nThis is it! Now our script will be executed automatically at the specified time points."
   },
@@ -39,7 +39,7 @@
     "href": "index.html",
     "title": "JP's Projects",
     "section": "",
-    "text": "launchd Setup\n\n\n\ncoding\n\n\nLaunchd\n\n\n\n\n\n\n\nJan-Philipp Quast\n\n\nApr 16, 2023\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Automation with launchd\n\n\n\ncoding\n\n\nLaunchd\n\n\n\n\n\n\n\nJan-Philipp Quast\n\n\nApr 16, 2023\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
