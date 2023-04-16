@@ -1,5 +1,5 @@
 ---
-title: launchd Setup
+title: Automation with launchd
 subtitle: Schedule Scripts on macOS
 date: "2023-04-16"
 author: "Jan-Philipp Quast"
@@ -8,6 +8,8 @@ fig-align: center
 title-block-banner: img/plist_banner.png
 image: img/plist.png
 ---
+
+If you enjoy automating things and work on a macOS system, `launchd` is a must know tool! But what is it and how does it work?
 
 `launchd` is a process on macOS that manages the execution and scheduling of background processes (daemons). It replaces older time-based job schedulers for Unix based systems such as `cron`. It comes in very handy if you want to schedule the execution of some scripts at specific times or intervals.
 
