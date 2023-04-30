@@ -1,0 +1,306 @@
+---
+title: Automation with Google Apps Script
+subtitle: Posting Data to Google Sheets
+date: "2023-04-22"
+author: "Jan-Philipp Quast"
+categories: [Google Apps Script, coding]
+fig-align: center
+title-block-banner: img/banner.png
+---
+
+Google Apps Script allows users to extend and connect the functionalities of various Google services, such as Google Sheets, Calendar, Gmail, and many more. 
+
+You can create macros, automate repetitive tasks, build custom add-ons, and integrate with external APIs. Google Apps Script is based on JavaScript and runs on Google servers, so there is no need to install any additional software.
+
+I came across Google Apps Script when I wanted to automatically update a Google Sheets document with data from a temperature and humidity sensor that I was building. So I decided to share my experience in a short tutorial on how to automate the process of logging data in Google Sheets.
+
+## Getting Started
+
+You can find a lot of information on how to use Google Apps Script by reading the official [documentation](https://developers.google.com/apps-script). It gives lots of examples for all the different apps that can be automated. 
+
+The documentation specifically for the Sheets app can be found [here](https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app).
+
+Having a basic understanding of JavaScript is advantageous since the scripting language is based on it. 
+
+## Creating a New Script
+
+In my project, I created a new spreadsheet that I named "sensor_1". To create a new script, navigate to `Extensions` -> `Apps Script`.
+
+![](https://i.imgur.com/uX3DH2x.jpg)
+
+You will find an empty example function.
+
+![](https://i.imgur.com/afqYCBZ.jpg)
+
+Next, you can give your new project a name that is easily identifiable. I gave it the same name as the spreadsheet.
+
+## Creating Functions
+
+In order to get started with Apps Script we can create a few simple example functions that help us understand what we are able to do.
+
+### Logging Information from Spreadsheet
+
+First, we are going to automatically log information that is present in our spreadsheet. I created some example data that we can play with.
+
+![Example Data](https://i.imgur.com/TXBJWyn.jpg)
+
+Next, we can write a simple function that allows us to log the data from the spreadsheet.
+
+![Logging function](https://i.imgur.com/tEEdsiQ.jpg)
+
+We use a few important methods in this first example.
+
+* `SpreadsheetApp.getActiveSheet()`: Get the sheet that is currently visible and in focus in the user's browser window. You can use several methods on the output in order to get information about the sheet or to modify it.
+
+Below, you can see an example function that would return the name of the currently active sheet using the `getName()` method.
+```javascript
+function getActiveSheetName() {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  var sheetName = sheet.getName();
+  Logger.log("The name of the active sheet is " + sheetName);
+}
+```
+
+* `getDataRange()`: Returns a `Range` object that represents the rectangular grid of cells containing data in a sheet.
+* `getValues()`: Get a 2D array with values in a sheet. This method is used on a `Range` object. 
+
+For us, the 2D array (`data`) has the following structure:
+
+```javascript
+[[Temperature, Humidity], [20.0, 50.0], [21.0, 60.0], [20.0, 55.0], [22.0, 40.0]]
+```
+
+Therefore, we can simply loop over the length (`data.length`) of the array, always accessing the first (`data[i][0]`; Temperature) and second (`data[i][1]`; Humidity) element of each subarray. In order to ignore the first row that contains the column labels, we are starting with index `i = 1`. 
+
+* `Logger.log()`: Write to the log.
+
+When you want to run your function for the first time (by pressing the "Run" button), you will be asked to authorise your script first.
+
+![Authorisation request](https://i.imgur.com/8OxR4gC.jpg)
+
+You will get a few dialogues telling you that you should not trust the developers app and that it has not yet been verified with Google. You can ignore this since you are the author of the script and you (should) know what you are doing.
+
+![](https://i.imgur.com/WXTogW2.jpg)
+
+![](https://i.imgur.com/FaVZUg4.jpg)
+
+After giving permission, the script should run and you should get the following output:
+
+![Logged data](https://i.imgur.com/JtQu0na.jpg)
+
+Great! Now you have seen how we can use the log to track information in the spreadsheet.
+
+### Adding Information to Spreadsheet
+
+Next, we would actually like to add information to the existing sheet. Running the code below will successfully add another row to the sheet containing a temperature of 25 and humidity of 70. 
+
+```javascript
+function add_temp_hum() {
+  var sheet = SpreadsheetApp.getActiveSheet();
+  sheet.appendRow([25, 70]);
+}
+```
+
+* `appendRow()`: Values to insert after the last row in the sheet. Provide information as an array.
+
+### Selecting a Sheet or Spreadsheet
+
+Instead of getting the currently active sheet, we can also specify which sheet we want to add information to by providing its name.
+
+```javascript
+function manipulateSheetByName() {
+  var sheetName = "Sheet1";
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  sheet.getRange("A7").setValue(22);
+}
+```
+
+As you can see, we use `getActiveSpreadsheet()` instead of `getActiveSheet()` here.
+
+`getActiveSpreadsheet()` returns a reference to the active Google Sheets spreadsheet, while `getActiveSheet()` returns a reference to the active sheet within that spreadsheet. With `getActiveSpreadsheet()`, you can perform operations on the entire spreadsheet, such as getting the URL or adding a new sheet. With `getActiveSheet()`, you can perform operations on the active sheet, such as reading or writing data to specific cells.
+
+* `getSheetByName()`: Returns a sheet with the given name.
+* `getRange()`: Selects a cell.
+* `setValue()`: Sets the value of a given cell.
+
+If you want to be even more specific about which spreadsheet you refer to, you can use its ID, as shown below. You can extract a spreadsheet ID from its URL by locating the string of characters between "/d/" and "/edit" in the URL. For example, in the URL "https://docs.google.com/spreadsheets/d/123sdaf124asdf/edit#gid=0", the spreadsheet ID is "123sdaf124asdf".
+
+```javascript
+function openById() {
+  var sheet_id = "YOUR_SHEET_ID_HERE";
+  var spreadsheet = SpreadsheetApp.openById(sheet_id);
+  var sheet = spreadsheet.getSheetByName("Sheet1");
+  var data = sheet.getDataRange().getValues();
+  Logger.log(data);
+}
+```
+
+* `openById()`: Open a sheet based on its ID.
+
+### Logging the Current Date
+
+For each of our temperature and humidity readings, we also want to record the current date and time of the reading. Let's first modify our spreadsheet to include columns for this information.
+
+![](https://i.imgur.com/eOQaUOk.jpg)
+With the code below, you can simply add a new row to the sheet that contains the date and time of execution as well as temperature and humidity data.
+
+```javascript
+function recordData() {
+  var sheet_id = "YOUR_SHEET_ID_HERE";
+  var spreadsheet = SpreadsheetApp.openById(sheet_id);
+  var sheet = spreadsheet.getSheetByName("Sheet1");
+  var rowData = [];
+  var d = new Date();
+    rowData[0] = d; // Date in column A
+    rowData[1] = d.toLocaleTimeString([], {timeZone: 'Europe/Zurich'}); // Timestamp in column B
+    rowData[2] = 22; // Temperature in column C
+    rowData[3] = 50; // Humidity in column D
+  sheet.appendRow(rowData); // Add data to the end of the table
+}
+```
+
+* `new Date()`: Is a constructor function that creates a new `Date` object with the current date.
+
+We save the date as the first element of the `rowData` array that we later use to append the sheet. Next, we want to extract the time component of the `Date` object and save it as the second element of the `rowData` array.
+
+* `toLocaleTimeString()`: Extracts the time of a `Date` object. Use the `timeZone` argument to specify a specific time zone. Specifying the time zone might not be necessary.
+
+![Updated Sheet](https://i.imgur.com/7ynyMIA.jpg)
+
+## Creating a Web App
+
+One powerful functionality of Google Apps Script is that you can deploy them as web apps, allowing any user to interact with them. In our case, we want to allow our microcontroller, which records temperature and humidity data, to interact with the application to log data in a spreadsheet. 
+
+You can create a user interface with an HTML file or just let the user interact with it through its URL.
+
+When you create a web app in Google Apps Script and deploy it, Google generates a unique deployment ID for the web app. You can then use this deployment ID to create a URL in the format `script.google.com/macros/s/{deployment_id}/exec`. This URL points to the web app and can be shared with anyone who needs to access the app.
+
+You can deploy your application simply by navigating to `Deploy` -> `New deployment`.
+
+![](https://i.imgur.com/lmuPQet.jpg)
+
+Select `Web app` as the deployment type.
+
+![](https://i.imgur.com/ypbfCyT.jpg)
+
+Next, provide a description and change the access to `Anyone` if you want anyone to be able to access the app without login. In our case, this is necessary because the microcontroller is not able to complete a login form. It just directly interacts with the app through the URL. 
+
+![](https://i.imgur.com/ktuCw2A.jpg)
+
+::: {.callout-warning}
+## Who should have access?
+
+Be careful with who you allow access to your app. If someone has the unique deployment ID of your app and it is open to anyone, they can interact with it. For apps that are meant to be accessed by humans, it is probably best to restrict access and require a login with a Google account. If you use it to log data like me, it is best not to share your deployment ID anywhere because otherwise other people would be able to log data into your spreadsheet.
+:::
+
+## Interacting with the Web App
+
+You can interact with the web app through its URL, creating GET and POST requests. In our case, we will include temperature and humidity information in the URL by letting the microcontroller create a GET request.
+
+The URL created would look something like this: `https://script.google.com/macros/s/{deployment_id}/exec?temperature=23&humidity=50`
+
+We can write a simple app that will help us understand what is going on when a user sends this GET request. We create a function `doGet()` with an `e` (event) argument, which will contain information about a GET request made by the user of the app. It is important that you name the function `doGet` for GET requests or `doPost` to handle POST requests.
+
+```javascript
+function doGet(e) {
+  Logger.log(e);
+}
+```
+
+If you deploy this as a web app and use the link above to provide temperature and humidity information, you will get the following output in the log:
+
+``` javascript
+{queryString=temperature=23&humidity=50, parameters={humidity=[50], temperature=[23]}, parameter={temperature=23, humidity=50}, contentLength=-1.0, contextPath=}
+```
+
+You can access the log under `Executions`. 
+
+![Web app log](https://i.imgur.com/htn8D3Y.jpg)
+
+The `parameters` and `parameters` objects contain key/value pairs of the request parameters. `parameters` contains an array of values for each key. Since we only provide one temperature and humidity value, the array only contains one value. `parameter`, in contrast, contains only the first value for parameters that have multiple values.
+
+This means that this query, `https://script.google.com/macros/s/{deployment_id}/exec?temperature=23&temperature=25&humidity=50&humidity=54`, would yield the following output:
+
+``` javascript
+{contentLength=-1.0, queryString=temperature=23&temperature=25&humidity=50&humidity=54, parameter={temperature=23, humidity=50}, parameters={humidity=[50, 54], temperature=[23, 25]}, contextPath=}
+```
+
+You can access the different properties of `e` directly by referring to them, for example, like this: `e.parameters`. 
+
+In order to access every element for every parameter that was sent, you can use two nested loops, as shown below.
+
+```javascript
+function doGet(e) {
+  Logger.log(e);  // Logs the entire event object to the console
+  Logger.log(e.parameters);  // Logs the parameters of the event object to the console
+  for (var param in e.parameters) {  // Loops through each parameter in the event object
+    Logger.log('Outer for loop, param=' + param);  // Logs the current parameter in the outer for loop
+    var values = e.parameters[param];  // Assigns the value(s) of the current parameter to a variable named "values"
+    for (var i in values) {  // Loops through each value in the "values" variable
+      Logger.log('Inner for loop, ' + param + ':' + values[i]);  // Logs the current parameter and its corresponding value(s) to the console
+    }
+  }
+  return ContentService.createTextOutput("Success");  // Returns a success message to the user
+}
+```
+
+* `return`: Supply a value that should be returned by the function. After `return` is reached in a function, it will stop its execution at that point and ignore any code below.
+* `ContentService.createTextOutput()`: Create a text output that can be shown on screen when provided to `return`.
+
+If you want to test an app, you can test deploy it instead of making a new deployment. This will generate a slightly different URL containing `dev` instead of `exec`. Otherwise, you can use it exactly the same way as usual to provide parameters.
+
+![Make a test deployment](https://i.imgur.com/MKpzZDW.jpg)
+
+Just go ahead and send multiple temperature and humidity values at once, like shown in the URL above, and then check the log of your test deployment.
+
+## Saving values from a GET request into a sheet
+
+For my temperature and humidity sensor, the microcontroller never sends more than one temperature and humidity reading at a time. Therefore, it is possible to use `e.parameter` instead of `e.parameters`, which makes dealing with the data a bit easier. 
+
+When putting everything from above together, I came up with the following function:
+
+```javascript
+function doGet(e) {
+  // Log data
+  Logger.log(e); 
+  Logger.log(e.parameter);
+  Logger.log('Temperature: ' + e.parameter.temperature);
+  Logger.log('Humidity: ' + e.parameter.humidity);
+
+  // Define return values
+  var result = "";
+  if (typeof e.parameter.temperature != 'undefined' && typeof e.parameter.humidity != 'undefined') {
+    // If both temperature and humidity are defined
+    result = "Success!";
+  }
+  if (typeof e.parameter.temperature == 'undefined') {
+    // If temperature is undefined
+    result = 'Temperature undefined.\n';
+  }
+  if (typeof e.parameter.humidity == 'undefined') {
+    // If humidity is undefined
+    result = result + 'Humidity undefined.';
+  }
+
+  // Access Sheet
+  var sheet_id = "YOUR_SHEET_ID_HERE";
+  var spreadsheet = SpreadsheetApp.openById(sheet_id);
+  var sheet = spreadsheet.getSheetByName("Sheet1");
+  var rowData = [];
+  var d = new Date(); // Get datetime
+
+    rowData[0] = d; // Date in column A
+    rowData[1] = d.toLocaleTimeString([], {timeZone: 'Europe/Zurich'}); // Timestamp in column B
+    rowData[2] = e.parameter.temperature; // Temperature in column C
+    rowData[3] = e.parameter.humidity; // Humidity in column D
+
+  sheet.appendRow(rowData); // Add data to the end of the table
+  
+  return ContentService.createTextOutput(result);
+}
+```
+
+* `typeof`: Checks the type of a variable. If a parameter was not provided in the URL, its type is `undefined` in this case.
+
+This function will save all the data that was provided to the spreadsheet. If temperature and humidity are missing, then only the date and time when a GET request was sent are saved to the spreadsheet.
+
