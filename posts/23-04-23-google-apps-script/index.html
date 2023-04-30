@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.340">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jan-Philipp Quast">
+<meta name="dcterms.date" content="2023-04-22">
+
+<title>JP’s Projects - Automation with Google Apps Script</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(img/banner.png);
+background-size: cover;
+      }
+</style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">JP’s Projects</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/jpquast" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/QuastJP" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Automation with Google Apps Script</h1>
+            <p class="subtitle lead">Posting Data to Google Sheets</p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Google Apps Script</div>
+                <div class="quarto-category">coding</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Jan-Philipp Quast </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 22, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link active" data-scroll-target="#getting-started">Getting Started</a></li>
+  <li><a href="#creating-a-new-script" id="toc-creating-a-new-script" class="nav-link" data-scroll-target="#creating-a-new-script">Creating a New Script</a></li>
+  <li><a href="#creating-functions" id="toc-creating-functions" class="nav-link" data-scroll-target="#creating-functions">Creating Functions</a>
+  <ul class="collapse">
+  <li><a href="#logging-information-from-spreadsheet" id="toc-logging-information-from-spreadsheet" class="nav-link" data-scroll-target="#logging-information-from-spreadsheet">Logging Information from Spreadsheet</a></li>
+  <li><a href="#adding-information-to-spreadsheet" id="toc-adding-information-to-spreadsheet" class="nav-link" data-scroll-target="#adding-information-to-spreadsheet">Adding Information to Spreadsheet</a></li>
+  <li><a href="#selecting-a-sheet-or-spreadsheet" id="toc-selecting-a-sheet-or-spreadsheet" class="nav-link" data-scroll-target="#selecting-a-sheet-or-spreadsheet">Selecting a Sheet or Spreadsheet</a></li>
+  <li><a href="#logging-the-current-date" id="toc-logging-the-current-date" class="nav-link" data-scroll-target="#logging-the-current-date">Logging the Current Date</a></li>
+  </ul></li>
+  <li><a href="#creating-a-web-app" id="toc-creating-a-web-app" class="nav-link" data-scroll-target="#creating-a-web-app">Creating a Web App</a></li>
+  <li><a href="#interacting-with-the-web-app" id="toc-interacting-with-the-web-app" class="nav-link" data-scroll-target="#interacting-with-the-web-app">Interacting with the Web App</a></li>
+  <li><a href="#saving-values-from-a-get-request-into-a-sheet" id="toc-saving-values-from-a-get-request-into-a-sheet" class="nav-link" data-scroll-target="#saving-values-from-a-get-request-into-a-sheet">Saving values from a GET request into a sheet</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>Google Apps Script allows users to extend and connect the functionalities of various Google services, such as Google Sheets, Calendar, Gmail, and many more.</p>
+<p>You can create macros, automate repetitive tasks, build custom add-ons, and integrate with external APIs. Google Apps Script is based on JavaScript and runs on Google servers, so there is no need to install any additional software.</p>
+<p>I came across Google Apps Script when I wanted to automatically update a Google Sheets document with data from a temperature and humidity sensor that I was building. So I decided to share my experience in a short tutorial on how to automate the process of logging data in Google Sheets.</p>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>You can find a lot of information on how to use Google Apps Script by reading the official <a href="https://developers.google.com/apps-script">documentation</a>. It gives lots of examples for all the different apps that can be automated.</p>
+<p>The documentation specifically for the Sheets app can be found <a href="https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app">here</a>.</p>
+<p>Having a basic understanding of JavaScript is advantageous since the scripting language is based on it.</p>
+</section>
+<section id="creating-a-new-script" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-new-script">Creating a New Script</h2>
+<p>In my project, I created a new spreadsheet that I named “sensor_1”. To create a new script, navigate to <code>Extensions</code> -&gt; <code>Apps Script</code>.</p>
+<p><img src="https://i.imgur.com/uX3DH2x.jpg" class="img-fluid"></p>
+<p>You will find an empty example function.</p>
+<p><img src="https://i.imgur.com/afqYCBZ.jpg" class="img-fluid"></p>
+<p>Next, you can give your new project a name that is easily identifiable. I gave it the same name as the spreadsheet.</p>
+</section>
+<section id="creating-functions" class="level2">
+<h2 class="anchored" data-anchor-id="creating-functions">Creating Functions</h2>
+<p>In order to get started with Apps Script we can create a few simple example functions that help us understand what we are able to do.</p>
+<section id="logging-information-from-spreadsheet" class="level3">
+<h3 class="anchored" data-anchor-id="logging-information-from-spreadsheet">Logging Information from Spreadsheet</h3>
+<p>First, we are going to automatically log information that is present in our spreadsheet. I created some example data that we can play with.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://i.imgur.com/TXBJWyn.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Example Data</figcaption>
+</figure>
+</div>
+<p>Next, we can write a simple function that allows us to log the data from the spreadsheet.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://i.imgur.com/tEEdsiQ.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Logging function</figcaption>
+</figure>
+</div>
+<p>We use a few important methods in this first example.</p>
+<ul>
+<li><code>SpreadsheetApp.getActiveSheet()</code>: Get the sheet that is currently visible and in focus in the user’s browser window. You can use several methods on the output in order to get information about the sheet or to modify it.</li>
+</ul>
+<p>Below, you can see an example function that would return the name of the currently active sheet using the <code>getName()</code> method.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">getActiveSheetName</span>() {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheet <span class="op">=</span> SpreadsheetApp<span class="op">.</span><span class="fu">getActiveSheet</span>()<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheetName <span class="op">=</span> sheet<span class="op">.</span><span class="fu">getName</span>()<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  Logger<span class="op">.</span><span class="fu">log</span>(<span class="st">"The name of the active sheet is "</span> <span class="op">+</span> sheetName)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>getDataRange()</code>: Returns a <code>Range</code> object that represents the rectangular grid of cells containing data in a sheet.</li>
+<li><code>getValues()</code>: Get a 2D array with values in a sheet. This method is used on a <code>Range</code> object.</li>
+</ul>
+<p>For us, the 2D array (<code>data</code>) has the following structure:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>[[Temperature<span class="op">,</span> Humidity]<span class="op">,</span> [<span class="fl">20.0</span><span class="op">,</span> <span class="fl">50.0</span>]<span class="op">,</span> [<span class="fl">21.0</span><span class="op">,</span> <span class="fl">60.0</span>]<span class="op">,</span> [<span class="fl">20.0</span><span class="op">,</span> <span class="fl">55.0</span>]<span class="op">,</span> [<span class="fl">22.0</span><span class="op">,</span> <span class="fl">40.0</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Therefore, we can simply loop over the length (<code>data.length</code>) of the array, always accessing the first (<code>data[i][0]</code>; Temperature) and second (<code>data[i][1]</code>; Humidity) element of each subarray. In order to ignore the first row that contains the column labels, we are starting with index <code>i = 1</code>.</p>
+<ul>
+<li><code>Logger.log()</code>: Write to the log.</li>
+</ul>
+<p>When you want to run your function for the first time (by pressing the “Run” button), you will be asked to authorise your script first.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://i.imgur.com/8OxR4gC.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Authorisation request</figcaption>
+</figure>
+</div>
+<p>You will get a few dialogues telling you that you should not trust the developers app and that it has not yet been verified with Google. You can ignore this since you are the author of the script and you (should) know what you are doing.</p>
+<p><img src="https://i.imgur.com/WXTogW2.jpg" class="img-fluid"></p>
+<p><img src="https://i.imgur.com/FaVZUg4.jpg" class="img-fluid"></p>
+<p>After giving permission, the script should run and you should get the following output:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://i.imgur.com/JtQu0na.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Logged data</figcaption>
+</figure>
+</div>
+<p>Great! Now you have seen how we can use the log to track information in the spreadsheet.</p>
+</section>
+<section id="adding-information-to-spreadsheet" class="level3">
+<h3 class="anchored" data-anchor-id="adding-information-to-spreadsheet">Adding Information to Spreadsheet</h3>
+<p>Next, we would actually like to add information to the existing sheet. Running the code below will successfully add another row to the sheet containing a temperature of 25 and humidity of 70.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">add_temp_hum</span>() {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheet <span class="op">=</span> SpreadsheetApp<span class="op">.</span><span class="fu">getActiveSheet</span>()<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  sheet<span class="op">.</span><span class="fu">appendRow</span>([<span class="dv">25</span><span class="op">,</span> <span class="dv">70</span>])<span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>appendRow()</code>: Values to insert after the last row in the sheet. Provide information as an array.</li>
+</ul>
+</section>
+<section id="selecting-a-sheet-or-spreadsheet" class="level3">
+<h3 class="anchored" data-anchor-id="selecting-a-sheet-or-spreadsheet">Selecting a Sheet or Spreadsheet</h3>
+<p>Instead of getting the currently active sheet, we can also specify which sheet we want to add information to by providing its name.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">manipulateSheetByName</span>() {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheetName <span class="op">=</span> <span class="st">"Sheet1"</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheet <span class="op">=</span> SpreadsheetApp<span class="op">.</span><span class="fu">getActiveSpreadsheet</span>()<span class="op">.</span><span class="fu">getSheetByName</span>(sheetName)<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  sheet<span class="op">.</span><span class="fu">getRange</span>(<span class="st">"A7"</span>)<span class="op">.</span><span class="fu">setValue</span>(<span class="dv">22</span>)<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As you can see, we use <code>getActiveSpreadsheet()</code> instead of <code>getActiveSheet()</code> here.</p>
+<p><code>getActiveSpreadsheet()</code> returns a reference to the active Google Sheets spreadsheet, while <code>getActiveSheet()</code> returns a reference to the active sheet within that spreadsheet. With <code>getActiveSpreadsheet()</code>, you can perform operations on the entire spreadsheet, such as getting the URL or adding a new sheet. With <code>getActiveSheet()</code>, you can perform operations on the active sheet, such as reading or writing data to specific cells.</p>
+<ul>
+<li><code>getSheetByName()</code>: Returns a sheet with the given name.</li>
+<li><code>getRange()</code>: Selects a cell.</li>
+<li><code>setValue()</code>: Sets the value of a given cell.</li>
+</ul>
+<p>If you want to be even more specific about which spreadsheet you refer to, you can use its ID, as shown below. You can extract a spreadsheet ID from its URL by locating the string of characters between “/d/” and “/edit” in the URL. For example, in the URL “https://docs.google.com/spreadsheets/d/123sdaf124asdf/edit#gid=0”, the spreadsheet ID is “123sdaf124asdf”.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">openById</span>() {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheet_id <span class="op">=</span> <span class="st">"YOUR_SHEET_ID_HERE"</span><span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> spreadsheet <span class="op">=</span> SpreadsheetApp<span class="op">.</span><span class="fu">openById</span>(sheet_id)<span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheet <span class="op">=</span> spreadsheet<span class="op">.</span><span class="fu">getSheetByName</span>(<span class="st">"Sheet1"</span>)<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> data <span class="op">=</span> sheet<span class="op">.</span><span class="fu">getDataRange</span>()<span class="op">.</span><span class="fu">getValues</span>()<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  Logger<span class="op">.</span><span class="fu">log</span>(data)<span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>openById()</code>: Open a sheet based on its ID.</li>
+</ul>
+</section>
+<section id="logging-the-current-date" class="level3">
+<h3 class="anchored" data-anchor-id="logging-the-current-date">Logging the Current Date</h3>
+<p>For each of our temperature and humidity readings, we also want to record the current date and time of the reading. Let’s first modify our spreadsheet to include columns for this information.</p>
+<p><img src="https://i.imgur.com/eOQaUOk.jpg" class="img-fluid"> With the code below, you can simply add a new row to the sheet that contains the date and time of execution as well as temperature and humidity data.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">recordData</span>() {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheet_id <span class="op">=</span> <span class="st">"YOUR_SHEET_ID_HERE"</span><span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> spreadsheet <span class="op">=</span> SpreadsheetApp<span class="op">.</span><span class="fu">openById</span>(sheet_id)<span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheet <span class="op">=</span> spreadsheet<span class="op">.</span><span class="fu">getSheetByName</span>(<span class="st">"Sheet1"</span>)<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> rowData <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> d <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    rowData[<span class="dv">0</span>] <span class="op">=</span> d<span class="op">;</span> <span class="co">// Date in column A</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    rowData[<span class="dv">1</span>] <span class="op">=</span> d<span class="op">.</span><span class="fu">toLocaleTimeString</span>([]<span class="op">,</span> {<span class="dt">timeZone</span><span class="op">:</span> <span class="st">'Europe/Zurich'</span>})<span class="op">;</span> <span class="co">// Timestamp in column B</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    rowData[<span class="dv">2</span>] <span class="op">=</span> <span class="dv">22</span><span class="op">;</span> <span class="co">// Temperature in column C</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    rowData[<span class="dv">3</span>] <span class="op">=</span> <span class="dv">50</span><span class="op">;</span> <span class="co">// Humidity in column D</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  sheet<span class="op">.</span><span class="fu">appendRow</span>(rowData)<span class="op">;</span> <span class="co">// Add data to the end of the table</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>new Date()</code>: Is a constructor function that creates a new <code>Date</code> object with the current date.</li>
+</ul>
+<p>We save the date as the first element of the <code>rowData</code> array that we later use to append the sheet. Next, we want to extract the time component of the <code>Date</code> object and save it as the second element of the <code>rowData</code> array.</p>
+<ul>
+<li><code>toLocaleTimeString()</code>: Extracts the time of a <code>Date</code> object. Use the <code>timeZone</code> argument to specify a specific time zone. Specifying the time zone might not be necessary.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://i.imgur.com/7ynyMIA.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Updated Sheet</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="creating-a-web-app" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-web-app">Creating a Web App</h2>
+<p>One powerful functionality of Google Apps Script is that you can deploy them as web apps, allowing any user to interact with them. In our case, we want to allow our microcontroller, which records temperature and humidity data, to interact with the application to log data in a spreadsheet.</p>
+<p>You can create a user interface with an HTML file or just let the user interact with it through its URL.</p>
+<p>When you create a web app in Google Apps Script and deploy it, Google generates a unique deployment ID for the web app. You can then use this deployment ID to create a URL in the format <code>script.google.com/macros/s/{deployment_id}/exec</code>. This URL points to the web app and can be shared with anyone who needs to access the app.</p>
+<p>You can deploy your application simply by navigating to <code>Deploy</code> -&gt; <code>New deployment</code>.</p>
+<p><img src="https://i.imgur.com/lmuPQet.jpg" class="img-fluid"></p>
+<p>Select <code>Web app</code> as the deployment type.</p>
+<p><img src="https://i.imgur.com/ypbfCyT.jpg" class="img-fluid"></p>
+<p>Next, provide a description and change the access to <code>Anyone</code> if you want anyone to be able to access the app without login. In our case, this is necessary because the microcontroller is not able to complete a login form. It just directly interacts with the app through the URL.</p>
+<p><img src="https://i.imgur.com/ktuCw2A.jpg" class="img-fluid"></p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Who should have access?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Be careful with who you allow access to your app. If someone has the unique deployment ID of your app and it is open to anyone, they can interact with it. For apps that are meant to be accessed by humans, it is probably best to restrict access and require a login with a Google account. If you use it to log data like me, it is best not to share your deployment ID anywhere because otherwise other people would be able to log data into your spreadsheet.</p>
+</div>
+</div>
+</section>
+<section id="interacting-with-the-web-app" class="level2">
+<h2 class="anchored" data-anchor-id="interacting-with-the-web-app">Interacting with the Web App</h2>
+<p>You can interact with the web app through its URL, creating GET and POST requests. In our case, we will include temperature and humidity information in the URL by letting the microcontroller create a GET request.</p>
+<p>The URL created would look something like this: <code>https://script.google.com/macros/s/{deployment_id}/exec?temperature=23&amp;humidity=50</code></p>
+<p>We can write a simple app that will help us understand what is going on when a user sends this GET request. We create a function <code>doGet()</code> with an <code>e</code> (event) argument, which will contain information about a GET request made by the user of the app. It is important that you name the function <code>doGet</code> for GET requests or <code>doPost</code> to handle POST requests.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">doGet</span>(e) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  Logger<span class="op">.</span><span class="fu">log</span>(e)<span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>If you deploy this as a web app and use the link above to provide temperature and humidity information, you will get the following output in the log:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>{queryString<span class="op">=</span>temperature<span class="op">=</span><span class="dv">23</span><span class="op">&amp;</span>humidity<span class="op">=</span><span class="dv">50</span><span class="op">,</span> parameters<span class="op">=</span>{humidity<span class="op">=</span>[<span class="dv">50</span>]<span class="op">,</span> temperature<span class="op">=</span>[<span class="dv">23</span>]}<span class="op">,</span> parameter<span class="op">=</span>{temperature<span class="op">=</span><span class="dv">23</span><span class="op">,</span> humidity<span class="op">=</span><span class="dv">50</span>}<span class="op">,</span> contentLength<span class="op">=-</span><span class="fl">1.0</span><span class="op">,</span> contextPath<span class="op">=</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can access the log under <code>Executions</code>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://i.imgur.com/htn8D3Y.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Web app log</figcaption>
+</figure>
+</div>
+<p>The <code>parameters</code> and <code>parameters</code> objects contain key/value pairs of the request parameters. <code>parameters</code> contains an array of values for each key. Since we only provide one temperature and humidity value, the array only contains one value. <code>parameter</code>, in contrast, contains only the first value for parameters that have multiple values.</p>
+<p>This means that this query, <code>https://script.google.com/macros/s/{deployment_id}/exec?temperature=23&amp;temperature=25&amp;humidity=50&amp;humidity=54</code>, would yield the following output:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>{contentLength<span class="op">=-</span><span class="fl">1.0</span><span class="op">,</span> queryString<span class="op">=</span>temperature<span class="op">=</span><span class="dv">23</span><span class="op">&amp;</span>temperature<span class="op">=</span><span class="dv">25</span><span class="op">&amp;</span>humidity<span class="op">=</span><span class="dv">50</span><span class="op">&amp;</span>humidity<span class="op">=</span><span class="dv">54</span><span class="op">,</span> parameter<span class="op">=</span>{temperature<span class="op">=</span><span class="dv">23</span><span class="op">,</span> humidity<span class="op">=</span><span class="dv">50</span>}<span class="op">,</span> parameters<span class="op">=</span>{humidity<span class="op">=</span>[<span class="dv">50</span><span class="op">,</span> <span class="dv">54</span>]<span class="op">,</span> temperature<span class="op">=</span>[<span class="dv">23</span><span class="op">,</span> <span class="dv">25</span>]}<span class="op">,</span> contextPath<span class="op">=</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>You can access the different properties of <code>e</code> directly by referring to them, for example, like this: <code>e.parameters</code>.</p>
+<p>In order to access every element for every parameter that was sent, you can use two nested loops, as shown below.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">doGet</span>(e) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  Logger<span class="op">.</span><span class="fu">log</span>(e)<span class="op">;</span>  <span class="co">// Logs the entire event object to the console</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  Logger<span class="op">.</span><span class="fu">log</span>(e<span class="op">.</span><span class="at">parameters</span>)<span class="op">;</span>  <span class="co">// Logs the parameters of the event object to the console</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (<span class="kw">var</span> param <span class="kw">in</span> e<span class="op">.</span><span class="at">parameters</span>) {  <span class="co">// Loops through each parameter in the event object</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    Logger<span class="op">.</span><span class="fu">log</span>(<span class="st">'Outer for loop, param='</span> <span class="op">+</span> param)<span class="op">;</span>  <span class="co">// Logs the current parameter in the outer for loop</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> values <span class="op">=</span> e<span class="op">.</span><span class="at">parameters</span>[param]<span class="op">;</span>  <span class="co">// Assigns the value(s) of the current parameter to a variable named "values"</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (<span class="kw">var</span> i <span class="kw">in</span> values) {  <span class="co">// Loops through each value in the "values" variable</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      Logger<span class="op">.</span><span class="fu">log</span>(<span class="st">'Inner for loop, '</span> <span class="op">+</span> param <span class="op">+</span> <span class="st">':'</span> <span class="op">+</span> values[i])<span class="op">;</span>  <span class="co">// Logs the current parameter and its corresponding value(s) to the console</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ContentService<span class="op">.</span><span class="fu">createTextOutput</span>(<span class="st">"Success"</span>)<span class="op">;</span>  <span class="co">// Returns a success message to the user</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>return</code>: Supply a value that should be returned by the function. After <code>return</code> is reached in a function, it will stop its execution at that point and ignore any code below.</li>
+<li><code>ContentService.createTextOutput()</code>: Create a text output that can be shown on screen when provided to <code>return</code>.</li>
+</ul>
+<p>If you want to test an app, you can test deploy it instead of making a new deployment. This will generate a slightly different URL containing <code>dev</code> instead of <code>exec</code>. Otherwise, you can use it exactly the same way as usual to provide parameters.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://i.imgur.com/MKpzZDW.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Make a test deployment</figcaption>
+</figure>
+</div>
+<p>Just go ahead and send multiple temperature and humidity values at once, like shown in the URL above, and then check the log of your test deployment.</p>
+</section>
+<section id="saving-values-from-a-get-request-into-a-sheet" class="level2">
+<h2 class="anchored" data-anchor-id="saving-values-from-a-get-request-into-a-sheet">Saving values from a GET request into a sheet</h2>
+<p>For my temperature and humidity sensor, the microcontroller never sends more than one temperature and humidity reading at a time. Therefore, it is possible to use <code>e.parameter</code> instead of <code>e.parameters</code>, which makes dealing with the data a bit easier.</p>
+<p>When putting everything from above together, I came up with the following function:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">doGet</span>(e) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Log data</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  Logger<span class="op">.</span><span class="fu">log</span>(e)<span class="op">;</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  Logger<span class="op">.</span><span class="fu">log</span>(e<span class="op">.</span><span class="at">parameter</span>)<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  Logger<span class="op">.</span><span class="fu">log</span>(<span class="st">'Temperature: '</span> <span class="op">+</span> e<span class="op">.</span><span class="at">parameter</span><span class="op">.</span><span class="at">temperature</span>)<span class="op">;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  Logger<span class="op">.</span><span class="fu">log</span>(<span class="st">'Humidity: '</span> <span class="op">+</span> e<span class="op">.</span><span class="at">parameter</span><span class="op">.</span><span class="at">humidity</span>)<span class="op">;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Define return values</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> result <span class="op">=</span> <span class="st">""</span><span class="op">;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="kw">typeof</span> e<span class="op">.</span><span class="at">parameter</span><span class="op">.</span><span class="at">temperature</span> <span class="op">!=</span> <span class="st">'undefined'</span> <span class="op">&amp;&amp;</span> <span class="kw">typeof</span> e<span class="op">.</span><span class="at">parameter</span><span class="op">.</span><span class="at">humidity</span> <span class="op">!=</span> <span class="st">'undefined'</span>) {</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// If both temperature and humidity are defined</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> <span class="st">"Success!"</span><span class="op">;</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="kw">typeof</span> e<span class="op">.</span><span class="at">parameter</span><span class="op">.</span><span class="at">temperature</span> <span class="op">==</span> <span class="st">'undefined'</span>) {</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// If temperature is undefined</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> <span class="st">'Temperature undefined.</span><span class="sc">\n</span><span class="st">'</span><span class="op">;</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="kw">typeof</span> e<span class="op">.</span><span class="at">parameter</span><span class="op">.</span><span class="at">humidity</span> <span class="op">==</span> <span class="st">'undefined'</span>) {</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// If humidity is undefined</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> result <span class="op">+</span> <span class="st">'Humidity undefined.'</span><span class="op">;</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Access Sheet</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheet_id <span class="op">=</span> <span class="st">"YOUR_SHEET_ID_HERE"</span><span class="op">;</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> spreadsheet <span class="op">=</span> SpreadsheetApp<span class="op">.</span><span class="fu">openById</span>(sheet_id)<span class="op">;</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> sheet <span class="op">=</span> spreadsheet<span class="op">.</span><span class="fu">getSheetByName</span>(<span class="st">"Sheet1"</span>)<span class="op">;</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> rowData <span class="op">=</span> []<span class="op">;</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> d <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">;</span> <span class="co">// Get datetime</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    rowData[<span class="dv">0</span>] <span class="op">=</span> d<span class="op">;</span> <span class="co">// Date in column A</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    rowData[<span class="dv">1</span>] <span class="op">=</span> d<span class="op">.</span><span class="fu">toLocaleTimeString</span>([]<span class="op">,</span> {<span class="dt">timeZone</span><span class="op">:</span> <span class="st">'Europe/Zurich'</span>})<span class="op">;</span> <span class="co">// Timestamp in column B</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    rowData[<span class="dv">2</span>] <span class="op">=</span> e<span class="op">.</span><span class="at">parameter</span><span class="op">.</span><span class="at">temperature</span><span class="op">;</span> <span class="co">// Temperature in column C</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    rowData[<span class="dv">3</span>] <span class="op">=</span> e<span class="op">.</span><span class="at">parameter</span><span class="op">.</span><span class="at">humidity</span><span class="op">;</span> <span class="co">// Humidity in column D</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>  sheet<span class="op">.</span><span class="fu">appendRow</span>(rowData)<span class="op">;</span> <span class="co">// Add data to the end of the table</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ContentService<span class="op">.</span><span class="fu">createTextOutput</span>(result)<span class="op">;</span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>typeof</code>: Checks the type of a variable. If a parameter was not provided in the URL, its type is <code>undefined</code> in this case.</li>
+</ul>
+<p>This function will save all the data that was provided to the spreadsheet. If temperature and humidity are missing, then only the date and time when a GET request was sent are saved to the spreadsheet.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
