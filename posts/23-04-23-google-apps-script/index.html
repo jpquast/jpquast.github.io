@@ -362,7 +362,7 @@ background-size: cover;
 </section>
 <section id="creating-a-web-app" class="level2">
 <h2 class="anchored" data-anchor-id="creating-a-web-app">Creating a Web App</h2>
-<p>One powerful functionality of Google Apps Script is that you can deploy them as web apps, allowing any user to interact with them. In our case, we want to allow our microcontroller, which records temperature and humidity data, to interact with the application to log data in a spreadsheet.</p>
+<p>The ability to deploy Google Apps Script as web apps is a powerful feature that allows for interaction with any user. In our case, we want to allow our microcontroller, which records temperature and humidity data, to interact with the application to log data in a spreadsheet.</p>
 <p>You can create a user interface with an HTML file or just let the user interact with it through its URL.</p>
 <p>When you create a web app in Google Apps Script and deploy it, Google generates a unique deployment ID for the web app. You can then use this deployment ID to create a URL in the format <code>script.google.com/macros/s/{deployment_id}/exec</code>. This URL points to the web app and can be shared with anyone who needs to access the app.</p>
 <p>You can deploy your application simply by navigating to <code>Deploy</code> -&gt; <code>New deployment</code>.</p>
@@ -402,7 +402,7 @@ Who should have access?
 <figcaption class="figure-caption">Web app log</figcaption>
 </figure>
 </div>
-<p>The <code>parameters</code> and <code>parameters</code> objects contain key/value pairs of the request parameters. <code>parameters</code> contains an array of values for each key. Since we only provide one temperature and humidity value, the array only contains one value. <code>parameter</code>, in contrast, contains only the first value for parameters that have multiple values.</p>
+<p>The <code>parameters</code> and <code>parameter</code> objects contain key/value pairs of the request parameters. <code>parameters</code> contains an array of values for each key. Since we only provide one temperature and humidity value, the array only contains one value. <code>parameter</code>, in contrast, contains only the first value for parameters that have multiple values.</p>
 <p>This means that this query, <code>https://script.google.com/macros/s/{deployment_id}/exec?temperature=23&amp;temperature=25&amp;humidity=50&amp;humidity=54</code>, would yield the following output:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>{contentLength<span class="op">=-</span><span class="fl">1.0</span><span class="op">,</span> queryString<span class="op">=</span>temperature<span class="op">=</span><span class="dv">23</span><span class="op">&amp;</span>temperature<span class="op">=</span><span class="dv">25</span><span class="op">&amp;</span>humidity<span class="op">=</span><span class="dv">50</span><span class="op">&amp;</span>humidity<span class="op">=</span><span class="dv">54</span><span class="op">,</span> parameter<span class="op">=</span>{temperature<span class="op">=</span><span class="dv">23</span><span class="op">,</span> humidity<span class="op">=</span><span class="dv">50</span>}<span class="op">,</span> parameters<span class="op">=</span>{humidity<span class="op">=</span>[<span class="dv">50</span><span class="op">,</span> <span class="dv">54</span>]<span class="op">,</span> temperature<span class="op">=</span>[<span class="dv">23</span><span class="op">,</span> <span class="dv">25</span>]}<span class="op">,</span> contextPath<span class="op">=</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>You can access the different properties of <code>e</code> directly by referring to them, for example, like this: <code>e.parameters</code>.</p>
@@ -829,6 +829,20 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       });
     }
   }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var filterRegex = new RegExp("https:\/\/github\.com\/jpquast\/jpquast\.github\.io");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+          // target, if specified
+          link.setAttribute("target", "_blank");
+      }
+    }
 });
 </script>
 </div> <!-- /content -->
