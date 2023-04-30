@@ -169,7 +169,7 @@ We save the date as the first element of the `rowData` array that we later use t
 
 ## Creating a Web App
 
-One powerful functionality of Google Apps Script is that you can deploy them as web apps, allowing any user to interact with them. In our case, we want to allow our microcontroller, which records temperature and humidity data, to interact with the application to log data in a spreadsheet. 
+The ability to deploy Google Apps Script as web apps is a powerful feature that allows for interaction with any user. In our case, we want to allow our microcontroller, which records temperature and humidity data, to interact with the application to log data in a spreadsheet. 
 
 You can create a user interface with an HTML file or just let the user interact with it through its URL.
 
@@ -217,7 +217,7 @@ You can access the log under `Executions`.
 
 ![Web app log](https://i.imgur.com/htn8D3Y.jpg)
 
-The `parameters` and `parameters` objects contain key/value pairs of the request parameters. `parameters` contains an array of values for each key. Since we only provide one temperature and humidity value, the array only contains one value. `parameter`, in contrast, contains only the first value for parameters that have multiple values.
+The `parameters` and `parameter` objects contain key/value pairs of the request parameters. `parameters` contains an array of values for each key. Since we only provide one temperature and humidity value, the array only contains one value. `parameter`, in contrast, contains only the first value for parameters that have multiple values.
 
 This means that this query, `https://script.google.com/macros/s/{deployment_id}/exec?temperature=23&temperature=25&humidity=50&humidity=54`, would yield the following output:
 
