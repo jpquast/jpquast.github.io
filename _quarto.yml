@@ -4,6 +4,7 @@ project:
 
 website:
   title: "JP's Projects"
+  favicon: img/favicon.png
   navbar:
     left:
       - icon: github
